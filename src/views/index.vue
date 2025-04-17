@@ -3,7 +3,7 @@
         <div class="login-panel">
            
         <div class="login-title">用户登录</div>
-        <el-form :model="fromData">
+        <el-form :model="fromData" :rules="rules" ref="formDataRef">
             
 
             <el-form-item prop="account">
@@ -16,7 +16,7 @@
 
             <el-form-item prop="checkCode">
                 <div class="check-code-panel">
-                    <el-input placeholder="请输入验证码" class="input-pancel"></el-input>
+                    <el-input placeholder="请输入验证码" class="input-pancel" v-model="fromData.checkCode"></el-input>
                     <img :src="checkCodeUrl" class="check-code" @click="changeCheckCode">
                 </div>
             </el-form-item>
@@ -25,7 +25,7 @@
                 <el-checkbox :label="true">记住我</el-checkbox>
             </el-form-item>
 
-            <el-button type="primary" style="width: 80%;" round>登录</el-button>
+            <el-button type="primary" style="width: 80%;" round @click="login()">登录</el-button>
 
         </el-form>
 
@@ -39,7 +39,6 @@
 <script setup>
 import { ElButton } from 'element-plus';
 import {reactive, ref} from 'vue';
-const fromData = reactive({})
 import { User, Lock } from '@element-plus/icons-vue'; // 引入 Element Plus 图标
 
 
@@ -49,6 +48,41 @@ const checkCodeUrl = ref("api/checkCode?" + new Date().getTime())
 const changeCheckCode = () => {
     checkCodeUrl.value = "api/checkCode?" + new Date().getTime();
 }
+
+// 用于表单校验
+const formDataRef = ref();
+const fromData = reactive({})
+
+// 这里的 rules 是对象而不是用数组
+const rules = {
+    account:[{
+        required: true,
+        message:"请输入用户名"
+    }],
+
+    password:[{
+        required: true,
+        message:"请输入密码"
+    }],
+
+    checkCode:[{
+        required: true,
+        message:"请输入验证码"
+    }],
+
+    
+}
+
+// 登录
+const login = () =>{
+    //判断表单值是否为空
+    formDataRef.value.validate((valid) => {
+        if (!valid) {
+           return;
+        } 
+    })
+}
+  
 
 </script>
 
